@@ -4,10 +4,12 @@ import com.holisticon.nimgame.request.DrawMatchesRequest;
 import com.holisticon.nimgame.request.StartGameRequest;
 import com.holisticon.nimgame.response.MoveResponse;
 import com.holisticon.nimgame.response.StartGameResponse;
+import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +28,9 @@ public class GameController {
 
   /**
    * CTOR: Injects the needed services
+   *
    * @param gameStateService Service that holds the game state and most of the game logic
-   * @param computerService Service that is responsible for computing the computer moves
+   * @param computerService  Service that is responsible for computing the computer moves
    */
   @Autowired
   public GameController(GameStateService gameStateService, ComputerService computerService) {
@@ -36,9 +39,13 @@ public class GameController {
   }
 
   /**
-   * Starts a new game. If the game is already running this can be used to clear the old game state.
-   * @param request Player request - Contains the strategy for the computer (should he play random or optimally)
-   * @return StartGameResponse - Overview over the matchstick pile and the selected computer strategy
+   * Starts a new game. If the game is already running this can be used to clear the old game
+   * state.
+   *
+   * @param request Player request - Contains the strategy for the computer (should he play random
+   *                or optimally)
+   * @return StartGameResponse - Overview over the matchstick pile and the selected computer
+   * strategy
    * @see StartGameResponse
    */
   @CrossOrigin
@@ -66,8 +73,9 @@ public class GameController {
 
   /**
    * Handles the draw matches request by the user. In this case the player always draws first. After
-   * the player's move is completely handled, the computer's move is calculated based on the selected
-   * strategy.
+   * the player's move is completely handled, the computer's move is calculated based on the
+   * selected strategy.
+   *
    * @param request Player request - Contains the number of matches to be drawn.
    * @return MoveResponse - Contains information about the moves of both players (how many matches
    * each party has drawn), the possible winner and an overview over the matchstick pile
@@ -92,12 +100,32 @@ public class GameController {
     int computerMove = this.computerService.makeMove();
 
     return ResponseEntity.ok().body(new MoveResponse(
-        "Test",
+        generateMessage(playerMove, computerMove),
         playerMove,
         computerMove,
         this.gameStateService.getAvailableMatches(),
         this.gameStateService.winner(),
         this.gameStateService.matchstickPile()
     ));
+  }
+
+  /**
+   * Generates a message that summarizes the previous turn.
+   *
+   * @param playerMove   The number of matches drawn by the player.
+   * @param computerMove The number of matches drawn by the computer.
+   * @return Message
+   */
+  public String generateMessage(@NonNull final int playerMove, @NonNull final int computerMove) {
+    String responseMessage;
+    switch (this.gameStateService.winner()) {
+      case NOBODY -> responseMessage = MessageFormat.format(
+            "You have drawn {0} matches and the computer draws {1}. Nobody wins.", playerMove, computerMove);
+      case HUMAN -> responseMessage = "The computer has drawn the last matchstick. You win!";
+      case COMPUTER -> responseMessage = "You have drawn the last matchstick. The computer wins!";
+      default -> responseMessage = "";
+    }
+
+    return responseMessage;
   }
 }
