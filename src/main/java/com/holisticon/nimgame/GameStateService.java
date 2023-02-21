@@ -41,6 +41,11 @@ public class GameStateService {
     // Starts the game
     if (!this.gameHasStarted) this.gameHasStarted = true;
 
+    // Prevents errors when the game has ended and the user still sends draw-requests
+    if (getAvailableMatches() == 0) {
+      throw new RuntimeException("You cannot draw matches since the game has already ended!");
+    }
+
     // Checks if the number of matches to be drawn is available in the stack
     if (getAvailableMatches() >= drawnMatches) {
       logger.info(playerReference + " draws " + drawnMatches + " matches.");
