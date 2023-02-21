@@ -7,9 +7,9 @@ import java.util.List;
 
 public record MoveResponse(
     @JsonProperty ("message") String message,
-    @JsonProperty ("player move") int playerMove,
-    @JsonProperty ("computer move") int computerMove,
-    @JsonProperty ("available matches") int availableMatches,
+    @JsonProperty ("player_move") int playerMove,
+    @JsonProperty ("computer_move") int computerMove,
+    @JsonProperty ("available_matches") int availableMatches,
     @JsonProperty ("winner") PlayerEnum winner,
     @JsonProperty ("game state") List<Matchstick> gameState
     ) {

@@ -43,7 +43,12 @@ public class GameStateService {
 
     // Prevents errors when the game has ended and the user still sends draw-requests
     if (getAvailableMatches() == 0) {
-      throw new RuntimeException("You cannot draw matches since the game has already ended!");
+      throw new RuntimeException("No more matches can be drawn after the end of the game!");
+    }
+
+    // Prevents errors when drawing either too few or too many matches
+    if (drawnMatches < 1 || drawnMatches > 3) {
+      throw new RuntimeException("Not less than 1 and not more than 3 matches can be drawn in one turn!");
     }
 
     // Checks if the number of matches to be drawn is available in the stack
@@ -69,6 +74,8 @@ public class GameStateService {
         case COMPUTER -> PlayerEnum.HUMAN;
         case NOBODY -> throw new RuntimeException("There must be a winner, that is either the player or the computer!");
       };
+
+      logger.info("The winner is: " + this.winner);
     }
 
     return drawnMatches;

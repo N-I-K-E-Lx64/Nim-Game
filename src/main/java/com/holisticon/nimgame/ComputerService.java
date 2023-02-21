@@ -40,7 +40,7 @@ public class ComputerService {
       // Random number between 1 and the previously computed maximum.
       int randomCount = rand.ints(1, (range + 1))
           .findFirst()
-          .getAsInt();
+              .orElseThrow(RuntimeException::new);
 
       this.gameStateService.drawMatches(randomCount, PlayerEnum.COMPUTER);
 
@@ -60,6 +60,10 @@ public class ComputerService {
 
       return optimalCount;
     }
+  }
+
+  public boolean isPlaysOptimalStrategy() {
+    return playsOptimalStrategy;
   }
 
   public void setStrategy(boolean playsOptimalStrategy) {

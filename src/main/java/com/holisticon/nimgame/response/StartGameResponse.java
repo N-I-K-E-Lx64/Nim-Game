@@ -6,8 +6,8 @@ import java.util.List;
 
 public record StartGameResponse(
     @JsonProperty("message") String message,
-    @JsonProperty("optimal strategy") boolean optimalStrategy,
-    @JsonProperty("game state") List<Matchstick> gameState
+    @JsonProperty("optimal_strategy") boolean optimalStrategy,
+    @JsonProperty("game_state") List<Matchstick> gameState
 ) {
 
 }
