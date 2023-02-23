@@ -69,4 +69,15 @@ public class GameControllerIntegrationTest {
 
         assertThat(computerService.isPlaysOptimalStrategy()).isTrue();
     }
+
+    @Test
+    public void drawMatchesBeforeGameStart() throws Exception {
+        DrawMatchesRequest json = new DrawMatchesRequest(matches);
+
+        this.mockMvc.perform(post("/draw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(json)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
 }

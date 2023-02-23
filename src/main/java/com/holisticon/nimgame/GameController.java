@@ -51,13 +51,18 @@ public class GameController {
   @CrossOrigin
   @PostMapping(value = "/start", produces = "application/json")
   public ResponseEntity<StartGameResponse> startGame(@RequestBody StartGameRequest request) {
+    // Checks whether the game has already been started to prevent loosing game progress
+    if (this.gameStateService.gameHasStarted())
+      throw new RuntimeException("The game has already been started! Please finish the game first.");
+
+    this.gameStateService.setGameHasStarted(true);
 
     // Set the computer strategy.
     this.computerService.setStrategy(request.playsOptimalStrategy());
 
     // Check if the game has already started. If that's the case the game state is reset.
-    if (this.gameStateService.gameHasStarted()) {
-      logger.info("The game has already started. The game state is reset.");
+    if (this.gameStateService.isGameCompleted()) {
+      logger.info("Resetting game state!");
 
       this.gameStateService.resetState();
     }
@@ -84,6 +89,9 @@ public class GameController {
   @CrossOrigin
   @PostMapping(value = "/draw", produces = "application/json")
   public ResponseEntity<MoveResponse> drawMatches(@RequestBody DrawMatchesRequest request) {
+    // Checks if the game has been started
+    if (!this.gameStateService.gameHasStarted())
+      throw new RuntimeException("You can't draw matches yet, because the game has not started yet!");
 
     logger.info("The player wants to draw " + request.drawnMatches() + " matches.");
 

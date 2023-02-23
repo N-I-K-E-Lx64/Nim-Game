@@ -20,6 +20,7 @@ public class GameStateService {
   private List<Matchstick> matchstickPile;
   private PlayerEnum winner;
   private boolean gameHasStarted;
+  private boolean isGameCompleted;
 
   /**
    * Ctor - Initializes the Matchstick pile and sets the winner to "nobody"
@@ -29,6 +30,7 @@ public class GameStateService {
     this.matchstickPile = resetPile();
     this.winner = PlayerEnum.NOBODY;
     this.gameHasStarted = false;
+    this.isGameCompleted = false;
   }
 
   /**
@@ -69,13 +71,15 @@ public class GameStateService {
 
     // Check the win-condition (There are no available matches and both players together have drawn 13 matches).
     if (getAvailableMatches() == 0 && getDrawnMatches() == 13) {
+      // The winner is always the opposite of the player that draws the last matchstick
       this.winner = switch (playerReference) {
         case HUMAN -> PlayerEnum.COMPUTER;
         case COMPUTER -> PlayerEnum.HUMAN;
         case NOBODY -> throw new RuntimeException("There must be a winner, that is either the player or the computer!");
       };
-
       logger.info("The winner is: " + this.winner);
+
+      this.isGameCompleted = true;
     }
 
     return drawnMatches;
@@ -132,6 +136,10 @@ public class GameStateService {
         .toList();
   }
 
+  public void setGameHasStarted(boolean gameHasStarted) {
+    this.gameHasStarted = gameHasStarted;
+  }
+
   public List<Matchstick> matchstickPile() {
     return matchstickPile;
   }
@@ -142,5 +150,9 @@ public class GameStateService {
 
   public boolean gameHasStarted() {
     return gameHasStarted;
+  }
+
+  public boolean isGameCompleted() {
+    return isGameCompleted;
   }
 }
