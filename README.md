@@ -5,6 +5,7 @@ Das Spiel wird mithilfe von REST-Requests gespielt. Zur Steuerung stehen 2 versc
 
 Endpoints:
 - `/start` : Über diesen Endpoint kann das Spiel gestartet werden. Gleichzeitig kann er auch dazu genutzt werden, den Spielzustand zurückzusetzen, um eine neue Runde zu spielen.
+
   Parameter : Boolean `strategy` - Legt fest, ob der Comuter optimal (*true*) oder random (*false*) spielen soll
   ```JSON
   {
@@ -12,12 +13,15 @@ Endpoints:
   }
   ```
 - `/draw` : Über diesen Endpoint übermittelt der Menschliche Spieler die Anzahl an Streichhölzern, die er in seinem aktuellen Zug ziehen möchte.
+
   Parameter : Integer `matches` - Anzahl an Streichhölzern
   ```JSON
   {
     "matches": 2
   }
   ```
+  
+Das Spiel muss zunächst über eine passende Anfrage an den `/start` Endpoint gestartet werden. Erst danach können über den `/draw` Endpoint Streichhölzer gezogen werden. 
   
 Der Server ist über localhost unter dem Port 8080 erreichbar!
  
